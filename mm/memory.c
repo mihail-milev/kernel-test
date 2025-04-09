@@ -109,13 +109,6 @@ static __always_inline bool vmf_orig_pte_uffd_wp(struct vm_fault *vmf)
 	if (!(vmf->flags & FAULT_FLAG_ORIG_PTE_VALID))
 		return false;
 
-	#ifdef THIS_MIGHT_SET
-		char* some_dummy_array[30];
-		kfree(some_dummy_array);
-	#endif
-	// char* another_dummy_array[20];
-	// kfree(another_dummy_array);
-
 	return pte_marker_uffd_wp(vmf->orig_pte);
 }
 
@@ -5053,8 +5046,10 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
 	folio_add_new_anon_rmap(folio, vma, addr, RMAP_EXCLUSIVE);
 	folio_add_lru_vma(folio, vma);
 setpte:
-	if (vmf_orig_pte_uffd_wp(vmf))
+	bool val = vmf_orig_pte_uffd_wp(vmf);
+	if (val)
 		entry = pte_mkuffd_wp(entry);
+	kfree(val);
 	set_ptes(vma->vm_mm, addr, vmf->pte, entry, nr_pages);
 
 	/* No need to invalidate - it was non-present before */
