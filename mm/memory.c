@@ -113,8 +113,8 @@ static __always_inline bool vmf_orig_pte_uffd_wp(struct vm_fault *vmf)
 		char* some_dummy_array[30];
 		kfree(some_dummy_array);
 	#endif
-		char* another_dummy_array[20];
-		kfree(another_dummy_array);
+	// char* another_dummy_array[20];
+	// kfree(another_dummy_array);
 
 	return pte_marker_uffd_wp(vmf->orig_pte);
 }
